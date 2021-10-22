@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:zoom-connector-mule-4="http://www.mulesoft.org/schema/mule/zoom-connector-mule-4" xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core"
+	xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core" xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd
+http://www.mulesoft.org/schema/mule/zoom-connector-mule-4 http://www.mulesoft.org/schema/mule/zoom-connector-mule-4/current/mule-zoom-connector-mule-4.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="784476be-44f2-474e-91d5-bc2cc9498eaf" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<zoom-connector-mule-4:zoom-config name="Zoom_Connector_Mule4Connector_Zoom_Connector_Configuration" doc:name="Zoom Connector Mule4Connector Zoom Connector Configuration" doc:id="37238954-0496-4b97-b91a-18a7fd870ec2" >
+		<zoom-connector-mule-4:bearer-connection />
+	</zoom-connector-mule-4:zoom-config>
+	<flow name="demoFlow" doc:id="6aa23e91-8468-4093-8f6f-645330469c4a" >
+		<http:listener doc:id="64afebe1-d3de-46aa-89b5-b2f1ffb1f4bd" doc:name="" path="/path" config-ref="HTTP_Listener_config"/>
+		<logger level="INFO" doc:name="entry" doc:id="41d2476b-9b3b-4550-b2a3-fa10eecf492b" message="entry"/>
+		<set-variable value="#[payload.price]" doc:name="Set Variable" doc:id="c5f176e3-062d-4670-afe5-c5e662e1835a" variableName="name"/>
+		<set-variable value="#[payload.student]" doc:name="Set Variable" doc:id="873ecba7-4db6-4763-a073-02b86cdca018" variableName="student"/>
+		<set-payload value='#["employee name: " ++ vars.name ++ " and  his age is " ++ vars.student]' doc:name="Set Payload" doc:id="d33e331f-582a-42da-bbf0-679ebe847356" />
+		<remove-variable doc:name="Remove Variable" doc:id="f402a3d3-726e-42a7-b33b-ee0eabb0fa44" variableName="age" />
+		<set-payload value="#[vars.name]" doc:name="Set Payload" doc:id="a9f4012f-ec54-49a3-86cd-70f101ed45e5" />
+		<ee:transform doc:name="Transform Message" doc:id="b5fb1148-9e92-4396-b0c1-ee2a822919a1" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/csv
+var a = 1
+var b =2
+---
+{ 
+	
+	sum: b + a
+	
+}]]></ee:set-payload>
+			</ee:message>
+			<ee:variables >
+				<ee:set-variable variableName="name" ><![CDATA[%dw 2.0
+output application/json
+var a = 1
+var b =2
+---
+{ sum: b + a}]]></ee:set-variable>
+			</ee:variables>
+		</ee:transform>
+	</flow>
+</mule>
